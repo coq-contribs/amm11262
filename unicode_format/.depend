@@ -1,0 +1,18 @@
+amm11262.cmo: amm11262.ml amm11262.cmi
+amm11262.cmx: amm11262.ml amm11262.cmi
+social1.cmo: social1.ml social1.cmi
+social1.cmx: social1.ml social1.cmi
+social2.cmo: social2.ml social2.cmi
+social2.cmx: social2.ml social2.cmi
+amm11262.cmi: amm11262.mli
+social1.cmi: social1.mli
+social2.cmi: social2.mli
+utf_AMM11262.vo: utf_AMM11262.v
+utf_AMM11262.vi: utf_AMM11262.v
+utf_example1.vo: utf_example1.v utf_AMM11262.vo
+utf_example1.vi: utf_example1.v utf_AMM11262.vo
+utf_example2.vo: utf_example2.v utf_AMM11262.vo
+utf_example2.vi: utf_example2.v utf_AMM11262.vo
+utf_AMM11262.html: utf_AMM11262.v
+utf_example1.html: utf_example1.v utf_AMM11262.html
+utf_example2.html: utf_example2.v utf_AMM11262.html
