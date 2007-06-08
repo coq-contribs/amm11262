@@ -101,7 +101,7 @@ Proof.
       rewrite (empty_is_empty_1 (cardinal_inv_1 (eq_add_S _ _ H_eq2))); reflexivity...
       (* ~ In 5 B *)
       apply False_rec.
-      assert (H11:=(@remove_1 B _ _ (Setoid.Seq_refl elt E.eq FM.E_ST 1))).
+      assert (H11:=(@remove_1 B _ _ (refl_equal 1))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
        destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
         apply H11; rewrite Hb1 in Hb; assumption.
@@ -162,7 +162,7 @@ Proof.
       rewrite (empty_is_empty_1 (cardinal_inv_1 (eq_add_S _ _ H_eq2))); reflexivity...
       (* ~ In 5 B *)
       apply False_rec.
-      assert (H22:=(@remove_1 B _ _ (Setoid.Seq_refl elt E.eq FM.E_ST 2))).
+      assert (H22:=(@remove_1 B _ _ (refl_equal 2))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
        destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
         apply H21; rewrite Hb1 in Hb; assumption.
@@ -215,7 +215,7 @@ Proof.
       rewrite (empty_is_empty_1 (cardinal_inv_1 (eq_add_S _ _ H_eq2))); reflexivity...
       (* ~ In 5 B *)
       apply False_rec.
-      assert (H33:=(@remove_1 B _ _ (Setoid.Seq_refl elt E.eq FM.E_ST 3))).
+      assert (H33:=(@remove_1 B _ _ (refl_equal 3))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
        destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
         apply H31; rewrite Hb1 in Hb; assumption.
@@ -260,7 +260,7 @@ Proof.
       rewrite (empty_is_empty_1 (cardinal_inv_1 (eq_add_S _ _ H_eq2))); reflexivity...
       (* ~ In 5 B *)
       apply False_rec.
-      assert (H44:=(@remove_1 B _ _ (Setoid.Seq_refl elt E.eq FM.E_ST 4))).
+      assert (H44:=(@remove_1 B _ _ (refl_equal 4))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
        destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
         apply H41; rewrite Hb1 in Hb; assumption.
@@ -297,7 +297,7 @@ Proof.
       assert (H52:=fun HH : In 2 (remove 5 B) => H2 (remove_3 HH)).
       assert (H53:=fun HH : In 3 (remove 5 B) => H3 (remove_3 HH)).
       assert (H54:=fun HH : In 4 (remove 5 B) => H4 (remove_3 HH)).
-      assert (H55:=(@remove_1 B _ _ (Setoid.Seq_refl elt E.eq FM.E_ST 5))).
+      assert (H55:=(@remove_1 B _ _ (refl_equal 5))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
       assert (H_sub':=@subset_remove_3 _ _ 5 H_sub).
       assert (Hb_town:=H_sub' _ Hb).
