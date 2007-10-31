@@ -201,7 +201,7 @@ Proof.
       apply knows_sym; apply knows_extensional with d; trivial;
       apply knows_sym; apply Hd2; assumption.
       (* In e B *)
-      apply HB3; assumption || apply FM.ME.neq_sym; assumption.
+      apply HB3; assumption || apply ME.neq_sym; assumption.
 Qed.
 
 End problem_knows_not_refl.

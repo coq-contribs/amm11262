@@ -105,15 +105,15 @@ Proof.
       apply False_rec.
       assert (H11:=(@remove_1 B _ _ (refl_equal 1))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
-       destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+       destruct (ME.eq_dec b 1) as [Hb1|Hb1].
         apply H11; rewrite Hb1 in Hb; assumption.
-        destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+        destruct (ME.eq_dec b 2) as [Hb2|Hb2].
          apply H12; rewrite <- Hb2; assumption.
-         destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+         destruct (ME.eq_dec b 3) as [Hb3|Hb3].
           apply H13; rewrite <- Hb3; assumption.
-          destruct (FM.ME.eq_dec b 4) as [Hb4|Hb4].
+          destruct (ME.eq_dec b 4) as [Hb4|Hb4].
            apply H14; rewrite <- Hb4; assumption.
-           destruct (FM.ME.eq_dec b 5) as [Hb5|Hb5].
+           destruct (ME.eq_dec b 5) as [Hb5|Hb5].
             apply H15; rewrite <- Hb5; assumption.
 
             assert (H_sub':=@subset_remove_3 _ _ 1 H_sub).
@@ -166,15 +166,15 @@ Proof.
       apply False_rec.
       assert (H22:=(@remove_1 B _ _ (refl_equal 2))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
-       destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+       destruct (ME.eq_dec b 1) as [Hb1|Hb1].
         apply H21; rewrite Hb1 in Hb; assumption.
-        destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+        destruct (ME.eq_dec b 2) as [Hb2|Hb2].
          apply H22; rewrite Hb2 in Hb; assumption.
-         destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+         destruct (ME.eq_dec b 3) as [Hb3|Hb3].
           apply H23; rewrite <- Hb3; assumption.
-          destruct (FM.ME.eq_dec b 4) as [Hb4|Hb4].
+          destruct (ME.eq_dec b 4) as [Hb4|Hb4].
            apply H24; rewrite <- Hb4; assumption.
-           destruct (FM.ME.eq_dec b 5) as [Hb5|Hb5].
+           destruct (ME.eq_dec b 5) as [Hb5|Hb5].
             apply H25; rewrite <- Hb5; assumption.
 
             assert (H_sub':=@subset_remove_3 _ _ 2 H_sub).
@@ -219,15 +219,15 @@ Proof.
       apply False_rec.
       assert (H33:=(@remove_1 B _ _ (refl_equal 3))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
-       destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+       destruct (ME.eq_dec b 1) as [Hb1|Hb1].
         apply H31; rewrite Hb1 in Hb; assumption.
-        destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+        destruct (ME.eq_dec b 2) as [Hb2|Hb2].
          apply H32; rewrite Hb2 in Hb; assumption.
-         destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+         destruct (ME.eq_dec b 3) as [Hb3|Hb3].
           apply H33; rewrite Hb3 in Hb; assumption.
-          destruct (FM.ME.eq_dec b 4) as [Hb4|Hb4].
+          destruct (ME.eq_dec b 4) as [Hb4|Hb4].
            apply H34; rewrite <- Hb4; assumption.
-           destruct (FM.ME.eq_dec b 5) as [Hb5|Hb5].
+           destruct (ME.eq_dec b 5) as [Hb5|Hb5].
             apply H35; rewrite <- Hb5; assumption.
 
             assert (H_sub':=@subset_remove_3 _ _ 3 H_sub).
@@ -264,15 +264,15 @@ Proof.
       apply False_rec.
       assert (H44:=(@remove_1 B _ _ (refl_equal 4))).
       destruct (cardinal_inv_2 H_card_rem) as [b Hb].
-       destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+       destruct (ME.eq_dec b 1) as [Hb1|Hb1].
         apply H41; rewrite Hb1 in Hb; assumption.
-        destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+        destruct (ME.eq_dec b 2) as [Hb2|Hb2].
          apply H42; rewrite Hb2 in Hb; assumption.
-         destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+         destruct (ME.eq_dec b 3) as [Hb3|Hb3].
           apply H43; rewrite Hb3 in Hb; assumption.
-          destruct (FM.ME.eq_dec b 4) as [Hb4|Hb4].
+          destruct (ME.eq_dec b 4) as [Hb4|Hb4].
            apply H44; rewrite Hb4 in Hb; assumption.
-           destruct (FM.ME.eq_dec b 5) as [Hb5|Hb5].
+           destruct (ME.eq_dec b 5) as [Hb5|Hb5].
             apply H45; rewrite <- Hb5; assumption.
 
             assert (H_sub':=@subset_remove_3 _ _ 4 H_sub).
@@ -317,15 +317,15 @@ Proof.
             apply (proj1 (FM.empty_iff b) Hb5_town)...
       (* 1,2,3,4,5 ∈ B *)
       destruct (cardinal_inv_2 H_card) as [b Hb].
-       destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+       destruct (ME.eq_dec b 1) as [Hb1|Hb1].
         apply H1; rewrite Hb1 in Hb; assumption.
-        destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+        destruct (ME.eq_dec b 2) as [Hb2|Hb2].
          apply H2; rewrite Hb2 in Hb; assumption.
-         destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+         destruct (ME.eq_dec b 3) as [Hb3|Hb3].
           apply H3; rewrite Hb3 in Hb; assumption.
-          destruct (FM.ME.eq_dec b 4) as [Hb4|Hb4].
+          destruct (ME.eq_dec b 4) as [Hb4|Hb4].
            apply H4; rewrite Hb4 in Hb; assumption.
-           destruct (FM.ME.eq_dec b 5) as [Hb5|Hb5].
+           destruct (ME.eq_dec b 5) as [Hb5|Hb5].
             apply H5; rewrite <- Hb5; assumption.
 
             assert (Hb_town:=H_sub _ Hb).

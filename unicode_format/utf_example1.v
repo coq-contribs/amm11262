@@ -63,11 +63,11 @@ Proof.
     (* ¬ 3∈B *)
     apply False_rec.
     destruct (cardinal_inv_2 H_card) as [b Hb].
-    destruct (FM.ME.eq_dec b 1) as [Hb1|Hb1].
+    destruct (ME.eq_dec b 1) as [Hb1|Hb1].
      apply H1; rewrite <- Hb1; assumption.
-     destruct (FM.ME.eq_dec b 2) as [Hb2|Hb2].
+     destruct (ME.eq_dec b 2) as [Hb2|Hb2].
      apply H2; rewrite <- Hb2; assumption.
-     destruct (FM.ME.eq_dec b 3) as [Hb3|Hb3].
+     destruct (ME.eq_dec b 3) as [Hb3|Hb3].
       apply H3; rewrite <- Hb3; assumption.
 
       assert (Hb_town:=H_sub _ Hb).
