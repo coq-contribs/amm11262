@@ -68,6 +68,10 @@ type 'x x_Relation_Class =
   | AsymmetricAreflexive of 'x
   | Leibniz
 
+type variance =
+  | Covariant
+  | Contravariant
+
 type reflexive_Relation_Class =
   | RSymmetric
   | RAsymmetric
@@ -108,17 +112,15 @@ module OrderedTypeFacts =
   
   let eq_dec x y =
     match O.compare x y with
-      | LT -> Right
       | EQ -> Left
-      | GT -> Right
+      | _ -> Right
   
   (** val lt_dec : O.t -> O.t -> sumbool **)
   
   let lt_dec x y =
     match O.compare x y with
       | LT -> Left
-      | EQ -> Right
-      | GT -> Right
+      | _ -> Right
   
   (** val eqb : O.t -> O.t -> bool **)
   
@@ -145,7 +147,11 @@ module Nat_as_OT =
 module type S = 
  sig 
   module E : 
-   OrderedType
+   sig 
+    type t 
+    
+    val compare : t -> t -> t compare
+   end
   
   type elt = E.t
   
@@ -310,9 +316,8 @@ module Raw =
              | Nil -> False
              | Cons (x', l') ->
                  (match X.compare x x' with
-                    | LT -> False
                     | EQ -> equal l l'
-                    | GT -> False))
+                    | _ -> False))
   
   (** val subset : t -> t -> bool **)
   
@@ -450,7 +455,7 @@ module Make =
   
   type t = slist
   
-  type elt = E.t
+  type elt = X.t
   
   (** val mem : elt -> t -> bool **)
   
@@ -566,10 +571,87 @@ module Make =
       | GT -> GT
  end
 
-module Facts = 
- functor (M:S) ->
+module type DecidableType = 
+ sig 
+  type t 
+  
+  val eq_dec : t -> t -> sumbool
+ end
+
+module OT_as_DT = 
+ functor (O:OrderedType) ->
  struct 
-  module ME = OrderedTypeFacts(M.E)
+  module OF = OrderedTypeFacts(O)
+  
+  type t = O.t
+  
+  (** val eq_dec : O.t -> O.t -> sumbool **)
+  
+  let eq_dec x y =
+    OF.eq_dec x y
+ end
+
+module type Coq_S = 
+ sig 
+  module E : 
+   sig 
+    type t 
+   end
+  
+  type elt = E.t
+  
+  type t 
+  
+  val empty : t
+  
+  val is_empty : t -> bool
+  
+  val mem : elt -> t -> bool
+  
+  val add : elt -> t -> t
+  
+  val singleton : elt -> t
+  
+  val remove : elt -> t -> t
+  
+  val union : t -> t -> t
+  
+  val inter : t -> t -> t
+  
+  val diff : t -> t -> t
+  
+  val equal : t -> t -> bool
+  
+  val subset : t -> t -> bool
+  
+  val fold : (elt -> 'a1 -> 'a1) -> t -> 'a1 -> 'a1
+  
+  val for_all : (elt -> bool) -> t -> bool
+  
+  val exists_ : (elt -> bool) -> t -> bool
+  
+  val filter : (elt -> bool) -> t -> t
+  
+  val partition : (elt -> bool) -> t -> (t, t) prod
+  
+  val cardinal : t -> nat
+  
+  val elements : t -> elt list
+  
+  val choose : t -> elt option
+ end
+
+module Facts = 
+ functor (M:Coq_S) ->
+ functor (D:DecidableType with type t= M.E.t with type eq=
+ __) ->
+ struct 
+  (** val eqb : D.t -> D.t -> bool **)
+  
+  let eqb x y =
+    match D.eq_dec x y with
+      | Left -> True
+      | Right -> False
   
   (** val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class **)
   
@@ -591,8 +673,8 @@ module Facts =
   let coq_EqualSetoid v =
     SymmetricReflexive
   
-  (** val coq_EqualSetoid_precise_relation_class : 
-  reflexive_Relation_Class **)
+  (** val coq_EqualSetoid_precise_relation_class :
+      reflexive_Relation_Class **)
   
   let coq_EqualSetoid_precise_relation_class =
     RSymmetric
@@ -666,14 +748,88 @@ module Facts =
   
   let equal_m_morphism_theory =
     Obj.magic M.equal
+  
+  (** val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class **)
+  
+  let coq_SubsetSetoid v =
+    AsymmetricReflexive v
+  
+  (** val coq_SubsetSetoid_precise_relation_class :
+      reflexive_Relation_Class **)
+  
+  let coq_SubsetSetoid_precise_relation_class =
+    RAsymmetric
+  
+  (** val coq_SubsetSetoid_morphism : morphism_Theory **)
+  
+  let coq_SubsetSetoid_morphism =
+    Obj.magic __
+  
+  (** val coq_In_s_m_morphism_theory : morphism_Theory **)
+  
+  let coq_In_s_m_morphism_theory =
+    Obj.magic __
+  
+  (** val coq_Empty_s_m_morphism_theory : morphism_Theory **)
+  
+  let coq_Empty_s_m_morphism_theory =
+    Obj.magic __
+  
+  (** val add_s_m_morphism_theory : morphism_Theory **)
+  
+  let add_s_m_morphism_theory =
+    Obj.magic M.add
+  
+  (** val remove_s_m_morphism_theory : morphism_Theory **)
+  
+  let remove_s_m_morphism_theory =
+    Obj.magic M.remove
+  
+  (** val union_s_m_morphism_theory : morphism_Theory **)
+  
+  let union_s_m_morphism_theory =
+    Obj.magic M.union
+  
+  (** val inter_s_m_morphism_theory : morphism_Theory **)
+  
+  let inter_s_m_morphism_theory =
+    Obj.magic M.inter
+  
+  (** val diff_s_m_morphism_theory : morphism_Theory **)
+  
+  let diff_s_m_morphism_theory =
+    Obj.magic M.diff
+ end
+
+module WeakDecide = 
+ functor (M:Coq_S) ->
+ functor (D:DecidableType with type t= M.E.t with type eq=
+ __) ->
+ struct 
+  module FSetLogicalFacts = 
+   struct 
+    
+   end
+  
+  module FSetDecideAuxiliary = 
+   struct 
+    module F = Facts(M)(D)
+   end
+  
+  module FSetDecideTestCases = 
+   struct 
+    
+   end
  end
 
 module Properties = 
  functor (M:S) ->
  struct 
-  module ME = OrderedTypeFacts(M.E)
+  module D = OT_as_DT(M.E)
   
-  module FM = Facts(M)
+  module FM = Facts(M)(D)
+  
+  module Dec = WeakDecide(M)(D)
   
   (** val coq_In_dec : M.elt -> M.t -> sumbool **)
   
@@ -689,31 +845,37 @@ module Properties =
       | Nil -> assert false (* absurd case *)
       | Cons (e, l) -> e
   
+  (** val cardinal_inv_2b : M.t -> M.elt **)
+  
+  let cardinal_inv_2b s =
+    match M.cardinal s with
+      | O -> assert false (* absurd case *)
+      | S n ->
+          (match M.elements s with
+             | Nil -> assert false (* absurd case *)
+             | Cons (e, l) -> e)
+  
   (** val cardinal_m_morphism_theory : morphism_Theory **)
   
   let cardinal_m_morphism_theory =
     Obj.magic M.cardinal
   
-  (** val cardinal_induction : (M.t -> __ -> 'a1) -> (M.t -> M.t -> 'a1 ->
-                               M.elt -> __ -> __ -> 'a1) -> nat -> M.t -> 'a1 **)
-  
-  let rec cardinal_induction x x0 n s =
-    match n with
-      | O -> x s __
-      | S n0 ->
-          let s0 =
-            match M.elements s with
-              | Nil -> assert false (* absurd case *)
-              | Cons (e, l) -> e
-          in
-          x0 (M.remove s0 s) s (cardinal_induction x x0 n0 (M.remove s0 s))
-            s0 __ __
-  
-  (** val set_induction : (M.t -> __ -> 'a1) -> (M.t -> M.t -> 'a1 -> M.elt
-                          -> __ -> __ -> 'a1) -> M.t -> 'a1 **)
+  (** val set_induction :
+      (M.t -> __ -> 'a1) -> (M.t -> M.t -> 'a1 -> M.elt -> __ -> __ -> 'a1)
+      -> M.t -> 'a1 **)
   
   let set_induction x x0 s =
-    cardinal_induction x x0 (M.cardinal s) s
+    let rec f n s0 =
+      match n with
+        | O -> x s0 __
+        | S n0 ->
+            let s1 =
+              match M.elements s0 with
+                | Nil -> assert false (* absurd case *)
+                | Cons (e, l) -> e
+            in
+            x0 (M.remove s1 s0) s0 (f n0 (M.remove s1 s0)) s1 __ __
+    in f (M.cardinal s) s
  end
 
 module NatSet = Make(Nat_as_OT)
@@ -735,8 +897,9 @@ let rec extendible_to_n town n b' =
                    (pred (NatSet.cardinal (NatSet.diff town s)))) s
            | Right -> b')
 
-(** val inductive_invariant : NatSet.t -> nat -> (NatSet.t -> __ -> __ ->
-                              NatSet.elt) -> nat -> NatSet.t **)
+(** val inductive_invariant :
+    NatSet.t -> nat -> (NatSet.t -> __ -> __ -> NatSet.elt) -> nat ->
+    NatSet.t **)
 
 let rec inductive_invariant town n property = function
   | O -> NatSet.empty
@@ -744,8 +907,8 @@ let rec inductive_invariant town n property = function
       let s = inductive_invariant town n property n0 in
       NatSet.add (property (extendible_to_n town n s) __ __) s
 
-(** val aMM11262 : NatSet.t -> nat -> (NatSet.t -> __ -> __ -> NatSet.elt) ->
-                   NatSet.elt **)
+(** val aMM11262 :
+    NatSet.t -> nat -> (NatSet.t -> __ -> __ -> NatSet.elt) -> NatSet.elt **)
 
 let aMM11262 town n property =
   let s = inductive_invariant town n property n in
@@ -760,8 +923,8 @@ let town_2 =
         (NatSet.add (S (S (S (S O))))
           (NatSet.add (S (S (S (S (S O))))) NatSet.empty))))
 
-(** val subsets_2 : NatSet.t -> sumbool sumor sumor sumor sumor sumor sumor
-                    sumor sumor **)
+(** val subsets_2 :
+    NatSet.t -> sumbool sumor sumor sumor sumor sumor sumor sumor sumor **)
 
 let subsets_2 b =
   match GeneralProperties.coq_In_dec (S O) b with

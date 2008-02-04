@@ -43,6 +43,10 @@ type 'x x_Relation_Class =
   | AsymmetricAreflexive of 'x
   | Leibniz
 
+type variance =
+  | Covariant
+  | Contravariant
+
 type reflexive_Relation_Class =
   | RSymmetric
   | RAsymmetric
@@ -92,7 +96,11 @@ module Nat_as_OT :
 module type S = 
  sig 
   module E : 
-   OrderedType
+   sig 
+    type t 
+    
+    val compare : t -> t -> t compare
+   end
   
   type elt = E.t
   
@@ -300,7 +308,7 @@ module Make :
   
   type t = slist
   
-  type elt = E.t
+  type elt = X.t
   
   val mem : elt -> t -> bool
   
@@ -347,17 +355,86 @@ module Make :
   val compare : t -> t -> t compare
  end
 
-module Facts : 
- functor (M:S) ->
+module type DecidableType = 
  sig 
-  module ME : 
+  type t 
+  
+  val eq_dec : t -> t -> sumbool
+ end
+
+module OT_as_DT : 
+ functor (O:OrderedType) ->
+ sig 
+  module OF : 
    sig 
-    val eq_dec : M.E.t -> M.E.t -> sumbool
+    val eq_dec : O.t -> O.t -> sumbool
     
-    val lt_dec : M.E.t -> M.E.t -> sumbool
+    val lt_dec : O.t -> O.t -> sumbool
     
-    val eqb : M.E.t -> M.E.t -> bool
+    val eqb : O.t -> O.t -> bool
    end
+  
+  type t = O.t
+  
+  val eq_dec : O.t -> O.t -> sumbool
+ end
+
+module type Coq_S = 
+ sig 
+  module E : 
+   sig 
+    type t 
+   end
+  
+  type elt = E.t
+  
+  type t 
+  
+  val empty : t
+  
+  val is_empty : t -> bool
+  
+  val mem : elt -> t -> bool
+  
+  val add : elt -> t -> t
+  
+  val singleton : elt -> t
+  
+  val remove : elt -> t -> t
+  
+  val union : t -> t -> t
+  
+  val inter : t -> t -> t
+  
+  val diff : t -> t -> t
+  
+  val equal : t -> t -> bool
+  
+  val subset : t -> t -> bool
+  
+  val fold : (elt -> 'a1 -> 'a1) -> t -> 'a1 -> 'a1
+  
+  val for_all : (elt -> bool) -> t -> bool
+  
+  val exists_ : (elt -> bool) -> t -> bool
+  
+  val filter : (elt -> bool) -> t -> t
+  
+  val partition : (elt -> bool) -> t -> (t, t) prod
+  
+  val cardinal : t -> nat
+  
+  val elements : t -> elt list
+  
+  val choose : t -> elt option
+ end
+
+module Facts : 
+ functor (M:Coq_S) ->
+ functor (D:DecidableType with type t= M.E.t with type eq=
+ __) ->
+ sig 
+  val eqb : D.t -> D.t -> bool
   
   val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
   
@@ -396,23 +473,116 @@ module Facts :
   val subset_m_morphism_theory : morphism_Theory
   
   val equal_m_morphism_theory : morphism_Theory
+  
+  val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+  
+  val coq_SubsetSetoid_precise_relation_class : reflexive_Relation_Class
+  
+  val coq_SubsetSetoid_morphism : morphism_Theory
+  
+  val coq_In_s_m_morphism_theory : morphism_Theory
+  
+  val coq_Empty_s_m_morphism_theory : morphism_Theory
+  
+  val add_s_m_morphism_theory : morphism_Theory
+  
+  val remove_s_m_morphism_theory : morphism_Theory
+  
+  val union_s_m_morphism_theory : morphism_Theory
+  
+  val inter_s_m_morphism_theory : morphism_Theory
+  
+  val diff_s_m_morphism_theory : morphism_Theory
+ end
+
+module WeakDecide : 
+ functor (M:Coq_S) ->
+ functor (D:DecidableType with type t= M.E.t with type eq=
+ __) ->
+ sig 
+  module FSetLogicalFacts : 
+   sig 
+    
+   end
+  
+  module FSetDecideAuxiliary : 
+   sig 
+    module F : 
+     sig 
+      val eqb : M.E.t -> M.E.t -> bool
+      
+      val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
+      
+      val coq_EltSetoid_precise_relation_class : reflexive_Relation_Class
+      
+      val coq_EltSetoid_morphism : morphism_Theory
+      
+      val coq_EqualSetoid : 'a1 -> 'a1 x_Relation_Class
+      
+      val coq_EqualSetoid_precise_relation_class : reflexive_Relation_Class
+      
+      val coq_EqualSetoid_morphism : morphism_Theory
+      
+      val coq_In_m_morphism_theory : morphism_Theory
+      
+      val is_empty_m_morphism_theory : morphism_Theory
+      
+      val coq_Empty_m_morphism_theory : morphism_Theory
+      
+      val mem_m_morphism_theory : morphism_Theory
+      
+      val singleton_m_morphism_theory : morphism_Theory
+      
+      val add_m_morphism_theory : morphism_Theory
+      
+      val remove_m_morphism_theory : morphism_Theory
+      
+      val union_m_morphism_theory : morphism_Theory
+      
+      val inter_m_morphism_theory : morphism_Theory
+      
+      val diff_m_morphism_theory : morphism_Theory
+      
+      val coq_Subset_m_morphism_theory : morphism_Theory
+      
+      val subset_m_morphism_theory : morphism_Theory
+      
+      val equal_m_morphism_theory : morphism_Theory
+      
+      val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+      
+      val coq_SubsetSetoid_precise_relation_class : reflexive_Relation_Class
+      
+      val coq_SubsetSetoid_morphism : morphism_Theory
+      
+      val coq_In_s_m_morphism_theory : morphism_Theory
+      
+      val coq_Empty_s_m_morphism_theory : morphism_Theory
+      
+      val add_s_m_morphism_theory : morphism_Theory
+      
+      val remove_s_m_morphism_theory : morphism_Theory
+      
+      val union_s_m_morphism_theory : morphism_Theory
+      
+      val inter_s_m_morphism_theory : morphism_Theory
+      
+      val diff_s_m_morphism_theory : morphism_Theory
+     end
+   end
+  
+  module FSetDecideTestCases : 
+   sig 
+    
+   end
  end
 
 module Properties : 
  functor (M:S) ->
  sig 
-  module ME : 
+  module D : 
    sig 
-    val eq_dec : M.E.t -> M.E.t -> sumbool
-    
-    val lt_dec : M.E.t -> M.E.t -> sumbool
-    
-    val eqb : M.E.t -> M.E.t -> bool
-   end
-  
-  module FM : 
-   sig 
-    module ME : 
+    module OF : 
      sig 
       val eq_dec : M.E.t -> M.E.t -> sumbool
       
@@ -420,6 +590,15 @@ module Properties :
       
       val eqb : M.E.t -> M.E.t -> bool
      end
+    
+    type t = M.E.t
+    
+    val eq_dec : M.E.t -> M.E.t -> sumbool
+   end
+  
+  module FM : 
+   sig 
+    val eqb : M.E.t -> M.E.t -> bool
     
     val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
     
@@ -458,17 +637,115 @@ module Properties :
     val subset_m_morphism_theory : morphism_Theory
     
     val equal_m_morphism_theory : morphism_Theory
+    
+    val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+    
+    val coq_SubsetSetoid_precise_relation_class : reflexive_Relation_Class
+    
+    val coq_SubsetSetoid_morphism : morphism_Theory
+    
+    val coq_In_s_m_morphism_theory : morphism_Theory
+    
+    val coq_Empty_s_m_morphism_theory : morphism_Theory
+    
+    val add_s_m_morphism_theory : morphism_Theory
+    
+    val remove_s_m_morphism_theory : morphism_Theory
+    
+    val union_s_m_morphism_theory : morphism_Theory
+    
+    val inter_s_m_morphism_theory : morphism_Theory
+    
+    val diff_s_m_morphism_theory : morphism_Theory
+   end
+  
+  module Dec : 
+   sig 
+    module FSetLogicalFacts : 
+     sig 
+      
+     end
+    
+    module FSetDecideAuxiliary : 
+     sig 
+      module F : 
+       sig 
+        val eqb : M.E.t -> M.E.t -> bool
+        
+        val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_EltSetoid_precise_relation_class : reflexive_Relation_Class
+        
+        val coq_EltSetoid_morphism : morphism_Theory
+        
+        val coq_EqualSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_EqualSetoid_precise_relation_class : reflexive_Relation_Class
+        
+        val coq_EqualSetoid_morphism : morphism_Theory
+        
+        val coq_In_m_morphism_theory : morphism_Theory
+        
+        val is_empty_m_morphism_theory : morphism_Theory
+        
+        val coq_Empty_m_morphism_theory : morphism_Theory
+        
+        val mem_m_morphism_theory : morphism_Theory
+        
+        val singleton_m_morphism_theory : morphism_Theory
+        
+        val add_m_morphism_theory : morphism_Theory
+        
+        val remove_m_morphism_theory : morphism_Theory
+        
+        val union_m_morphism_theory : morphism_Theory
+        
+        val inter_m_morphism_theory : morphism_Theory
+        
+        val diff_m_morphism_theory : morphism_Theory
+        
+        val coq_Subset_m_morphism_theory : morphism_Theory
+        
+        val subset_m_morphism_theory : morphism_Theory
+        
+        val equal_m_morphism_theory : morphism_Theory
+        
+        val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_SubsetSetoid_precise_relation_class :
+          reflexive_Relation_Class
+        
+        val coq_SubsetSetoid_morphism : morphism_Theory
+        
+        val coq_In_s_m_morphism_theory : morphism_Theory
+        
+        val coq_Empty_s_m_morphism_theory : morphism_Theory
+        
+        val add_s_m_morphism_theory : morphism_Theory
+        
+        val remove_s_m_morphism_theory : morphism_Theory
+        
+        val union_s_m_morphism_theory : morphism_Theory
+        
+        val inter_s_m_morphism_theory : morphism_Theory
+        
+        val diff_s_m_morphism_theory : morphism_Theory
+       end
+     end
+    
+    module FSetDecideTestCases : 
+     sig 
+      
+     end
    end
   
   val coq_In_dec : M.elt -> M.t -> sumbool
   
   val cardinal_inv_2 : M.t -> nat -> M.elt
   
-  val cardinal_m_morphism_theory : morphism_Theory
+  val cardinal_inv_2b : M.t -> M.elt
   
-  val cardinal_induction :
-    (M.t -> __ -> 'a1) -> (M.t -> M.t -> 'a1 -> M.elt -> __ -> __ -> 'a1) ->
-    nat -> M.t -> 'a1
+  val cardinal_m_morphism_theory : morphism_Theory
   
   val set_induction :
     (M.t -> __ -> 'a1) -> (M.t -> M.t -> 'a1 -> M.elt -> __ -> __ -> 'a1) ->
@@ -481,21 +758,21 @@ module NatSet :
    sig 
     module E : 
      sig 
-      type t = Nat_as_OT.t
+      type t = nat
       
-      val compare : t -> t -> t compare
+      val compare : t -> t -> nat compare
      end
     
     module MX : 
      sig 
-      val eq_dec : Nat_as_OT.t -> Nat_as_OT.t -> sumbool
+      val eq_dec : nat -> nat -> sumbool
       
-      val lt_dec : Nat_as_OT.t -> Nat_as_OT.t -> sumbool
+      val lt_dec : nat -> nat -> sumbool
       
-      val eqb : Nat_as_OT.t -> Nat_as_OT.t -> bool
+      val eqb : nat -> nat -> bool
      end
     
-    type elt = Nat_as_OT.t
+    type elt = nat
     
     type t = elt list
     
@@ -546,9 +823,9 @@ module NatSet :
   
   module E : 
    sig 
-    type t = Nat_as_OT.t
+    type t = nat
     
-    val compare : t -> t -> t compare
+    val compare : t -> t -> nat compare
    end
   
   type slist =
@@ -563,7 +840,7 @@ module NatSet :
   
   type t = slist
   
-  type elt = E.t
+  type elt = nat
   
   val mem : elt -> t -> bool
   
@@ -612,25 +889,25 @@ module NatSet :
 
 module GeneralProperties : 
  sig 
-  module ME : 
+  module D : 
    sig 
-    val eq_dec : NatSet.E.t -> NatSet.E.t -> sumbool
+    module OF : 
+     sig 
+      val eq_dec : nat -> nat -> sumbool
+      
+      val lt_dec : nat -> nat -> sumbool
+      
+      val eqb : nat -> nat -> bool
+     end
     
-    val lt_dec : NatSet.E.t -> NatSet.E.t -> sumbool
+    type t = nat
     
-    val eqb : NatSet.E.t -> NatSet.E.t -> bool
+    val eq_dec : nat -> nat -> sumbool
    end
   
   module FM : 
    sig 
-    module ME : 
-     sig 
-      val eq_dec : NatSet.E.t -> NatSet.E.t -> sumbool
-      
-      val lt_dec : NatSet.E.t -> NatSet.E.t -> sumbool
-      
-      val eqb : NatSet.E.t -> NatSet.E.t -> bool
-     end
+    val eqb : nat -> nat -> bool
     
     val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
     
@@ -669,17 +946,115 @@ module GeneralProperties :
     val subset_m_morphism_theory : morphism_Theory
     
     val equal_m_morphism_theory : morphism_Theory
+    
+    val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+    
+    val coq_SubsetSetoid_precise_relation_class : reflexive_Relation_Class
+    
+    val coq_SubsetSetoid_morphism : morphism_Theory
+    
+    val coq_In_s_m_morphism_theory : morphism_Theory
+    
+    val coq_Empty_s_m_morphism_theory : morphism_Theory
+    
+    val add_s_m_morphism_theory : morphism_Theory
+    
+    val remove_s_m_morphism_theory : morphism_Theory
+    
+    val union_s_m_morphism_theory : morphism_Theory
+    
+    val inter_s_m_morphism_theory : morphism_Theory
+    
+    val diff_s_m_morphism_theory : morphism_Theory
+   end
+  
+  module Dec : 
+   sig 
+    module FSetLogicalFacts : 
+     sig 
+      
+     end
+    
+    module FSetDecideAuxiliary : 
+     sig 
+      module F : 
+       sig 
+        val eqb : nat -> nat -> bool
+        
+        val coq_EltSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_EltSetoid_precise_relation_class : reflexive_Relation_Class
+        
+        val coq_EltSetoid_morphism : morphism_Theory
+        
+        val coq_EqualSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_EqualSetoid_precise_relation_class : reflexive_Relation_Class
+        
+        val coq_EqualSetoid_morphism : morphism_Theory
+        
+        val coq_In_m_morphism_theory : morphism_Theory
+        
+        val is_empty_m_morphism_theory : morphism_Theory
+        
+        val coq_Empty_m_morphism_theory : morphism_Theory
+        
+        val mem_m_morphism_theory : morphism_Theory
+        
+        val singleton_m_morphism_theory : morphism_Theory
+        
+        val add_m_morphism_theory : morphism_Theory
+        
+        val remove_m_morphism_theory : morphism_Theory
+        
+        val union_m_morphism_theory : morphism_Theory
+        
+        val inter_m_morphism_theory : morphism_Theory
+        
+        val diff_m_morphism_theory : morphism_Theory
+        
+        val coq_Subset_m_morphism_theory : morphism_Theory
+        
+        val subset_m_morphism_theory : morphism_Theory
+        
+        val equal_m_morphism_theory : morphism_Theory
+        
+        val coq_SubsetSetoid : 'a1 -> 'a1 x_Relation_Class
+        
+        val coq_SubsetSetoid_precise_relation_class :
+          reflexive_Relation_Class
+        
+        val coq_SubsetSetoid_morphism : morphism_Theory
+        
+        val coq_In_s_m_morphism_theory : morphism_Theory
+        
+        val coq_Empty_s_m_morphism_theory : morphism_Theory
+        
+        val add_s_m_morphism_theory : morphism_Theory
+        
+        val remove_s_m_morphism_theory : morphism_Theory
+        
+        val union_s_m_morphism_theory : morphism_Theory
+        
+        val inter_s_m_morphism_theory : morphism_Theory
+        
+        val diff_s_m_morphism_theory : morphism_Theory
+       end
+     end
+    
+    module FSetDecideTestCases : 
+     sig 
+      
+     end
    end
   
   val coq_In_dec : NatSet.elt -> NatSet.t -> sumbool
   
   val cardinal_inv_2 : NatSet.t -> nat -> NatSet.elt
   
-  val cardinal_m_morphism_theory : morphism_Theory
+  val cardinal_inv_2b : NatSet.t -> NatSet.elt
   
-  val cardinal_induction :
-    (NatSet.t -> __ -> 'a1) -> (NatSet.t -> NatSet.t -> 'a1 -> NatSet.elt ->
-    __ -> __ -> 'a1) -> nat -> NatSet.t -> 'a1
+  val cardinal_m_morphism_theory : morphism_Theory
   
   val set_induction :
     (NatSet.t -> __ -> 'a1) -> (NatSet.t -> NatSet.t -> 'a1 -> NatSet.elt ->
