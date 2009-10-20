@@ -222,7 +222,7 @@ Proof.
       apply knows_sym; apply knows_extensional with d; trivial;
       apply knows_sym; apply Hd2; assumption.
       (* e∈B *)
-      apply HB3; assumption || apply NatSet.Raw.MX.neq_sym; assumption.
+      apply HB3; assumption || contradict Hu'; auto.
 Qed.
 
 End problem_knows_not_refl.
