@@ -222,7 +222,7 @@ Proof.
       apply knows_sym; apply knows_extensional with d; trivial;
       apply knows_sym; apply Hd2; assumption.
       (* e∈B *)
-      apply HB3; assumption || contradict Hu'; auto.
+      apply HB3; assumption || contradict Hu'; auto with *.
 Qed.
 
 End problem_knows_not_refl.
