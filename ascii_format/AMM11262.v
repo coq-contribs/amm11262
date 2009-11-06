@@ -13,7 +13,7 @@ Require FSetList.
 Module NatSet := FSetList.Make(OrderedTypeEx.Nat_as_OT).
 Import NatSet.
 
-Infix "++" := add (at level 30, right associativity).
+Infix "++" := add (at level 60, right associativity).
 Notation "s [=] t" := (Equal s t) (at level 70, no associativity).
 
 Require FSetFacts FSetProperties.
