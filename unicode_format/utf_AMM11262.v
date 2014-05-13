@@ -6,7 +6,7 @@
 (*                  <http://www.gnu.org/licenses/lgpl.txt>              *)
 (************************************************************************)
 
-Require Import Arith.
+Require Import Arith Omega.
 
 Require OrderedTypeEx.
 Require FSetList.
