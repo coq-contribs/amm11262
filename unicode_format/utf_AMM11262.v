@@ -59,8 +59,7 @@ Variable property: ∀B, B ⊆ town ⇒ |B| = n ⇒
 
 Lemma extendible_by_one:∀ B', |B'| ≤ |town| -1 ⇒ ∃d, d∈town ∧ ¬(d∈B').
 Proof.
- clear property.
- clear knows knows_sym knows_extensional.
+ clear knows knows_sym knows_extensional property.
  intros B' H_cardinal_town.
  assert (H_town:1≤ |town|); [omega|].
  rewrite <- (diff_inter_cardinal town B') in H_cardinal_town.
