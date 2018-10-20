@@ -34,8 +34,8 @@ Notation "| A |" := (cardinal A) (at level 10, no associativity).
 Infix "≡" := E.eq (at level 70, no associativity).
 Infix "∩" := inter (at level 40, left associativity).
 Infix "∪" := union (at level 50, left associativity).
-Notation " { x } ∪ X " := (add x X).
-Notation " X \ { x } " := (remove x X).
+Notation " { x } ∪ X " := (add x X) (at level 50, left associativity).
+Notation " X \ { x } " := (remove x X) (at level 40, left associativity).
 Notation "∅" := empty.
 
 Require FSetFacts FSetProperties.
