@@ -17,6 +17,7 @@ Infix "++" := add (at level 60, right associativity).
 Notation "s [=] t" := (Equal s t) (at level 70, no associativity).
 
 Require FSetFacts FSetProperties.
+Require Extraction.
 
 Module GeneralProperties := FSetProperties.Properties NatSet.
 Import GeneralProperties.

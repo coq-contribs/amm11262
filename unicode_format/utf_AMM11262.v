@@ -10,6 +10,7 @@ Require Import Arith Omega.
 
 Require OrderedTypeEx.
 Require FSetList.
+Require Extraction.
 Module NatSet := FSetList.Make(OrderedTypeEx.Nat_as_OT).
 Import NatSet.
 
